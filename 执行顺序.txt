@@ -9,3 +9,5 @@ express2023-2025.ipynb
 xgboost-竞争-2023-2025-Copy1.ipynb
 
 xgboost-竞争-测试2024-7-10数据-origin (2).ipynb
+
+说明：如需对 XGBoost 超参数进行贝叶斯优化，在上述 XGBoost 笔记本中引入 `xgb_bayes_opt.py` 并调用 `bayesian_tune_xgb`，调参产物（最佳参数/尝试记录/最终模型）将写入 `data_hh/result/`。
