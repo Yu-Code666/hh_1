@@ -18,16 +18,16 @@ except Exception as exc:  # pragma: no cover - import-time guidance only
 
 
 def smape_eval(y_pred: np.ndarray, dtrain: xgb.DMatrix):
-    """Custom SMAPE evaluation for XGBoost.
+    """Custom SMAPE evaluation for XGBoost (feval API).
 
-    Returns (name, value, is_higher_better=False) so early stopping minimizes SMAPE.
+    XGBoost expects a 2-tuple (name, value) for feval. We minimize SMAPE by
+    passing maximize=False in xgb.train.
     """
     y_true = dtrain.get_label()
     denom = np.abs(y_true) + np.abs(y_pred)
-    # Avoid division by zero; if denom is 0, treat contribution as 0
     denom = np.where(denom == 0, 1.0, denom)
     smape = 100.0 * np.mean(2.0 * np.abs(y_pred - y_true) / denom)
-    return "SMAPE", float(smape), False
+    return "SMAPE", float(smape)
 
 
 def _ensure_dir(path: str) -> None:
