@@ -10,4 +10,22 @@ xgboost-竞争-2023-2025-Copy1.ipynb
 
 xgboost-竞争-测试2024-7-10数据-origin (2).ipynb
 
-说明：如需对 XGBoost 超参数进行贝叶斯优化，在上述 XGBoost 笔记本中引入 `xgb_bayes_opt.py` 并调用 `bayesian_tune_xgb`，调参产物（最佳参数/尝试记录/最终模型）将写入 `data_hh/result/`。
+说明：
+1）XGBoost 训练模式（xgboost-竞争-2023-2025-Copy1.ipynb）
+  - 在 notebook 顶部（或靠后新增的配置单元）设置：
+    - MODE = "bayes" 或 "manual"（显式选择，不自动切换）
+    - BEST_JSON_PATH = data_hh/result/xgb_bayes_best_params.json
+    - USE_SAVED_BEST = True/False（仅 manual 模式生效）
+    - MANUAL_PARAMS（manual 模式下可直接填写）
+  - Bayes 模式：若 BEST_JSON_PATH 存在，会自动 warm-start 再继续优化；产物写入：
+    - data_hh/result/xgb_bayes_trials.csv
+    - data_hh/result/xgb_bayes_best_params.json
+    - data_hh/result/model/xgb_model_bayes.json
+    - data_hh/result/pred_xgb_bayes.csv
+  - Manual 模式：从 JSON 或 MANUAL_PARAMS 读取参数；产物写入：
+    - data_hh/result/model/xgb_model_manual.json
+    - data_hh/result/pred_xgb_manual.csv
+
+2）贝叶斯优化库依赖
+  - 仅 Bayes 模式需要安装：pip install bayesian-optimization
+  - Manual 模式无需该依赖。

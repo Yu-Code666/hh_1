@@ -46,6 +46,7 @@ def bayesian_tune_xgb(
     verbose_eval: int = 50,
     results_dir: str = "data_hh/result",
     save_model_name: Optional[str] = None,
+    init_probe_params: Optional[Dict] = None,
 ):
     """Tune key XGBoost hyperparameters using Bayesian Optimization.
 
@@ -148,6 +149,25 @@ def bayesian_tune_xgb(
         random_state=random_state,
         verbose=2,
     )
+
+    # Optional warm-start: probe an initial parameter set (e.g., from saved JSON)
+    if init_probe_params:
+        probe = dict(init_probe_params)
+        # map 'lambda' to 'lambda_' if provided
+        if "lambda" in probe and "lambda_" not in probe:
+            probe["lambda_"] = float(probe.pop("lambda"))
+        # coerce numeric types and round ints
+        if "max_depth" in probe:
+            probe["max_depth"] = int(round(float(probe["max_depth"])))
+        if "num_boost_round" in probe:
+            probe["num_boost_round"] = int(round(float(probe["num_boost_round"])))
+        for key in ("learning_rate", "subsample", "colsample_bytree", "alpha", "lambda_"):
+            if key in probe:
+                probe[key] = float(probe[key])
+        # keep only keys present in bounds
+        probe = {k: v for k, v in probe.items() if k in default_bounds}
+        if probe:
+            optimizer.probe(params=probe, lazy=True)
 
     optimizer.maximize(init_points=init_points, n_iter=n_iter)
 
